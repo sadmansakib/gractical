@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/gocarina/gocsv"
-	cliArgument "github.com/sadmansakib/gractical/cli_argument"
+	cliArgument "github.com/sadmansakib/gractical/cliargument"
 	"github.com/sadmansakib/gractical/common"
 	"os"
 	"strings"

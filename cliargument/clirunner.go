@@ -1,4 +1,4 @@
-package cli_argument
+package cliargument
 
 import (
 	"fmt"
