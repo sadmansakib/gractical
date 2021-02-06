@@ -17,7 +17,8 @@ var buildExecuteCmd = &cobra.Command{
 	Run: execCommand,
 }
 
-var src, dest,exe string
+var src, dest, exe string
+var exclude bool
 
 func init() {
 	rootCmd.AddCommand(buildExecuteCmd)
@@ -35,6 +36,9 @@ func init() {
 	buildExecuteCmd.Flags().StringVar(
 		&exe, "exe", "", "compile the code and build a binary")
 
+	buildExecuteCmd.Flags().BoolVar(
+		&exclude, "exclude-tests", false, "excludes test files while coping")
+
 	buildExecuteCmd.Flags().StringVar(
 		&src,
 		"copydir",
@@ -51,17 +55,24 @@ func execCommand(_ *cobra.Command, _ []string) {
 		fmt.Println("Operation can not be done. source and destination are same")
 		return
 	} else {
-		err := common.CopyDir(src, dest)
-		common.Check(err)
-	}
-
-	if len(exe) > 0{
-		cmd := exec.Command("go", "build", "-o", exe)
-		cmd.Dir = dest
-		out, err := cmd.Output()
-		if err != nil {
-			fmt.Println(err.Error())
+		if exclude {
+			err := common.CopyDirExcludingTest(src, dest)
+			common.Check(err)
+		} else {
+			err := common.CopyDir(src, dest)
+			common.Check(err)
 		}
-		fmt.Println(out)
+	}
+	if len(exe) > 0 {
+		build(dest)
+	}
+}
+
+func build(name string)  {
+	cmd := exec.Command("go", "build", "-o", exe)
+	cmd.Dir = name
+	_, err := cmd.Output()
+	if err != nil {
+		fmt.Println(err.Error())
 	}
 }
